@@ -1,0 +1,85 @@
+---
+title: "HW2"
+author: "Hanqing Liu"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+<font size=4>
+<br/>
+
+# Variable description:</br>
+*	Location: City name of the geographic market</br>
+*	Zip: US zip code for the geographic market</br>
+*	q_sold: Quantity of minivan sold in # of cars</br>
+*	ave_p:  Average price sold (in thousand USD)</br>
+*	comp_p: Average Chrysler’s minivan price (in thousand USD)</br> 
+*	adv: Advertising expenditure (in thousand USD)</br>
+
+
+# Question1
+## • Summary statistics of dimenstion(except Zipcode)
+
+```{r read_csv, include=FALSE}
+minivan<-read.csv("/Users/hanqliu/Library/CloudStorage/OneDrive-个人/文档/SPRING1/Retail Analytics/session2/minivan_hw2-1.csv")
+```
+```{r summary, echo=FALSE}
+summary(minivan[,-2])
+```
+Data is clean without NULL value.
+
+## • Generate two-way plot except location and zipcode
+```{r plot, echo=FALSE}
+plot(minivan[,-1:-2])
+```
+<br/>
+There is a clear negative correlation between q_sold and ave_p. The calculated correlation is `r cor(minivan$q_sold, minivan$ave_p)`. With the average sold price going high, the quantities is likely to reduce.<br/><br/>
+Between ave_p and comp_p, there is also a clear positive correlation of `r cor(minivan$ave_p, minivan$comp_p)`, which also explains the correlation between q_sold and comp_p with a correlation of `r cor(minivan$q_sold, minivan$comp_p)`.<br/><br/>
+For other elements, the correlation was not obvious like the ones mentioned above.
+```{r}
+
+```
+
+
+# Question2
+## • Regression between q_sold and ave_p
+```{r reg1, echo=FALSE}
+sold_price<-lm(q_sold~ave_p,data=minivan)
+summary(sold_price)
+```
+<br/>
+The result shows that there is a clear linear relationship between q_sold and ave_p, with a linear model
+$$q\_sold=184.4653-7.5637*ave\_p$$
+The coefficient of ave_p and the intercept are both statistically significantly to be none-zero.<br/>
+The overall p_value of this model also passed statistically significance test with a p-value of 6.085e-11.<br/>
+
+## • Discuss the model
+The R-square of this model is 0.643, which is satisfying and with little risk of over-fitting.<br/>
+
+# Question3
+
+## • Multiple regression
+```{r reg2,echo=FALSE}
+all_reg<-lm(q_sold~ave_p+adv+comp_p,data=minivan)
+summary(all_reg)
+```
+<br/>
+The overall result shows the linear model between q_sold and ave_p, adv, comp_P is statistically significant, with a overall p_value of 3.163e-10, while the T-test of the coefficient of both adv and comp_p both failed at significant level of 95%, which indicates the estimation of the coefficient may not be reliable. It could be caused by the high correlation between these two variables and ave_p.
+<br/>
+
+## • Discuss the model
+
+The R-square of this model is 0.6886 and the adjusted r_square is 0.6653. Considering it independently, it's satisfying without too much concerns of over-fitting, but with two more variables added, the r-square didn't obviously increase, which could be a concern that having ave_p controlled, the added two variables didn't contributed much about the precision of the model.
+
+# Question4
+#### I may request:
+* Detailed retailing data by month from different locations
+For different locations of the retail dealers, there are too many uncontrolled variables which can confuse the model. By having the monthly quantity of sale, sale_price, advertisement spending and other information, we could develop diverse models for retailers at different location, which could me more precise and generate more insights.<br/>
+* The channels of the advertisement and their cost
+The absolute money spent on advertisement can not directly refletc the effect of advertisement. With the cost spent on different channels we can take a look at the potential promotion effect of different platform, and use this to analyse its influence on unit sold.
+* Promotion(discount) information
+Although the average selling price are provided, considering the operation cost of different locations may vary, I want to know the promotions or discounts the retailers they offer the customers. Besides the actual price of the car, with this data we can analyse consumers' sensitivity about our discount or promotions by that.
+* The population/the amount of drivers/market analysis of different cities
+The unit sold can have strong relationship with the local market. With these market analysis data, we can have a better measure on the competitive of our brands, our dealers, and our price in different area.
+</font>
